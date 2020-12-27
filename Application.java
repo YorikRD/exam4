@@ -20,21 +20,21 @@ public class Application {
     static  MountainDao mountainDao = new MountainDao();
 
     public static void main(String[] args) {
-        List<Mountain> mountainsForCheck = genMountains();
-//        System.out.println(mountainsForCheck);
-        for (Mountain mountain : mountainsForCheck) {
-            mountainDao.add(mountain);
-        }
-        List<GroupClimbers> groupClimbersForCheck = genGroups(mountainsForCheck);
-        for (GroupClimbers groupClimbers : groupClimbersForCheck) {
-            groupClimberDao.add(groupClimbers);
-        }
-//        System.out.println(groupClimbersForCheck);
-        List<Climber> climbersForCheck = genClimbers(groupClimbersForCheck);
-        for (Climber climber : climbersForCheck) {
-            climberDao.add(climber);
-        }
-//        System.out.println(climbersForCheck);
+//        List<Mountain> mountainsForCheck = genMountains();
+////        System.out.println(mountainsForCheck);
+//        for (Mountain mountain : mountainsForCheck) {
+//            mountainDao.add(mountain);
+//        }
+//        List<GroupClimbers> groupClimbersForCheck = genGroups(mountainsForCheck);
+//        for (GroupClimbers groupClimbers : groupClimbersForCheck) {
+//            groupClimberDao.add(groupClimbers);
+//        }
+////        System.out.println(groupClimbersForCheck);
+//        List<Climber> climbersForCheck = genClimbers(groupClimbersForCheck);
+//        for (Climber climber : climbersForCheck) {
+//            climberDao.add(climber);
+//        }
+////        System.out.println(climbersForCheck);
 
         checkExamMethods();
 

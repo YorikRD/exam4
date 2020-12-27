@@ -14,7 +14,7 @@ import java.util.Set;
 public class GroupClimbers extends PrimeID{
     @ManyToOne(fetch = FetchType.LAZY)
     private Mountain mountain;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "groups")
     private Set<Climber> members;
     @Column
     private boolean availableToJoin;
@@ -56,7 +56,7 @@ public class GroupClimbers extends PrimeID{
             }
             Set<GroupClimbers> newL = cldao.getByPk(member.getId()).getGroups();
             newL.add(this);
-            member.setGroupsChecked(newL);           
+            member.setGroupsChecked(newL);
 
         }
 
@@ -97,7 +97,7 @@ public class GroupClimbers extends PrimeID{
                 "mountain=" + mountain.getId()+" "+mountain.getName()+
                 ", availableToJoin=" + availableToJoin +
                 ", start=" + start +
-                ", lengthDays=" + lengthDays +
+                ", lengthDays=" + lengthDays +" total members " +members.size()+
                 '}';
     }
 }

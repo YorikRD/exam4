@@ -19,7 +19,7 @@ public class Climber extends PrimeID {
     private String adress;
     @Column(nullable = false)
     private int age;
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<GroupClimbers> groups;
 
     public Climber(String name, String adress, int age) {
