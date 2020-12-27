@@ -1,8 +1,11 @@
 package tourism;
 
+import Dao.ClimberDao;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -44,7 +47,21 @@ public class GroupClimbers extends PrimeID{
     }
 
     public void setMembers(Set<Climber> members) {
+        ClimberDao cldao = new ClimberDao();
+        for (Climber member : members) {
+            if(member.getId()==0&& member!= cldao.getByPk(0)){
+              Set<GroupClimbers> newL = member.getGroups();
+              newL.add(this);
+              member.setGroups(newL);
+            }
+            Set<GroupClimbers> newL = cldao.getByPk(member.getId()).getGroups();
+            newL.add(this);
+            member.setGroupsChecked(newL);           
+
+        }
+
         this.members = members;
+
     }
 
     public boolean isAvailableToJoin() {

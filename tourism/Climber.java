@@ -1,9 +1,12 @@
 package tourism;
 
 
+import Dao.ClimberDao;
+import auxilary.SolitaryManager;
 import staticGen.StaticStrings;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -28,7 +31,6 @@ public class Climber extends PrimeID {
 
     public Climber() {
     }
-
 
 
     public String getName() {
@@ -70,15 +72,58 @@ public class Climber extends PrimeID {
     }
 
     public void setGroups(Set<GroupClimbers> groups) {
-        this.groups = groups;
+       setGroupsChecked(groups);
     }
 
-    private String groupsIdandMountain(){
+    public boolean setGroupsChecked (Set<GroupClimbers> groups) {
+        ClimberDao tempDao = new ClimberDao();
+        if (this.getId() == 0 && tempDao.getByPk(0) != this) {
+            this.groups = groups;
+            return false;
+        }
+        Set<GroupClimbers> groupsCurrient = tempDao.getByPk(this.getId()).getGroups();
+        for (GroupClimbers groupClimbers : groupsCurrient) {
+            LocalDate start1 = groupClimbers.getStart();
+            LocalDate finish1 = groupClimbers.getStart().plusDays(groupClimbers.getLengthDays());
+            for (GroupClimbers group : groups) {
+                LocalDate start2 =group.getStart();
+                LocalDate finish2 = start2.plusDays(group.getLengthDays());
+                if (start2.isAfter(start1)&&start2.isBefore(finish1)) return false;
+                if (finish2.isAfter(start1)&&start2.isBefore(finish1)) return false;
+            }
+        }
+        this.groups =groups;
+        return true;
+    }
+
+    private String groupsIdandMountain() {
         StringBuilder stringBuilder = new StringBuilder(" Groups");
         for (GroupClimbers group : groups) {
-            stringBuilder.append(" "+group.getId()+" to mountain: "+group.getMountain()+'\n');
+            stringBuilder.append(" " + group.getId() + " to mountain: " + group.getMountain() + '\n');
         }
         String result = stringBuilder.toString();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Climber climber = (Climber) o;
+
+        if (age != climber.age) return false;
+        if (name != null ? !name.equals(climber.name) : climber.name != null) return false;
+        if (adress != null ? !adress.equals(climber.adress) : climber.adress != null) return false;
+        return groups != null ? groups.equals(climber.groups) : climber.groups == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (adress != null ? adress.hashCode() : 0);
+        result = 31 * result + age;
+        result = 31 * result + (groups != null ? groups.hashCode() : 0);
         return result;
     }
 
@@ -87,7 +132,9 @@ public class Climber extends PrimeID {
         return '\n' + "Climber{" + " Id of: " + getId() + " " +
                 "name='" + name + '\'' +
                 ", adress='" + adress + '\'' +
-                ", age=" + age + groupsIdandMountain()+
+                ", age=" + age + groupsIdandMountain() +
                 '}';
     }
+
+
 }
