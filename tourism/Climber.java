@@ -29,13 +29,7 @@ public class Climber extends PrimeID {
     public Climber() {
     }
 
-    public static Climber getRand() {
-        Climber climber = new Climber();
-        climber.setName(StaticStrings.getName);
-        climber.setAdress(StaticStrings.getAdress);
-        climber.setAge(StaticStrings.getRAge);
-        return climber;
-    }
+
 
     public String getName() {
         return name;
@@ -79,12 +73,21 @@ public class Climber extends PrimeID {
         this.groups = groups;
     }
 
+    private String groupsIdandMountain(){
+        StringBuilder stringBuilder = new StringBuilder(" Groups");
+        for (GroupClimbers group : groups) {
+            stringBuilder.append(" "+group.getId()+" to mountain: "+group.getMountain()+'\n');
+        }
+        String result = stringBuilder.toString();
+        return result;
+    }
+
     @Override
     public String toString() {
         return '\n' + "Climber{" + " Id of: " + getId() + " " +
                 "name='" + name + '\'' +
                 ", adress='" + adress + '\'' +
-                ", age=" + age +
+                ", age=" + age + groupsIdandMountain()+
                 '}';
     }
 }

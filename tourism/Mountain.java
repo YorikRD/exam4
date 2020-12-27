@@ -66,7 +66,7 @@ public class Mountain extends PrimeID{
 
     @Override
     public String toString() {
-        return "Mountain{" +
+        return  '\n'+"Mountain{" +
                 "name='" + name + '\'' +
                 ", country='" + country + '\'' +
                 ", height=" + height +

@@ -9,19 +9,25 @@ import java.util.Set;
 @Entity
 @Table(name = "groups")
 public class GroupClimbers extends PrimeID{
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Mountain mountain;
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Climber> members;
     @Column
     private boolean availableToJoin;
     @Column
-    @Temporal(TemporalType.DATE)
-    private Date start;
+    private LocalDate start;
 
     private int lengthDays;
 
     public GroupClimbers() {
+    }
+
+    public GroupClimbers(Mountain mountain, boolean availableToJoin, LocalDate start, int lengthDays) {
+       setMountain(mountain);
+        this.availableToJoin = availableToJoin;
+        this.start = start;
+        setLengthDays(lengthDays);
     }
 
     public Mountain getMountain() {
@@ -49,11 +55,11 @@ public class GroupClimbers extends PrimeID{
         this.availableToJoin = availableToJoin;
     }
 
-    public Date getStart() {
+    public LocalDate getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(LocalDate start) {
         this.start = start;
     }
 
@@ -66,5 +72,15 @@ public class GroupClimbers extends PrimeID{
             throw new IllegalArgumentException("Length of groups journey mus be at least one day");
         }
         this.lengthDays = lengthDays;
+    }
+
+    @Override
+    public String toString() {
+        return  '\n'+"GroupClimbers{" +
+                "mountain=" + mountain.getId()+" "+mountain.getName()+
+                ", availableToJoin=" + availableToJoin +
+                ", start=" + start +
+                ", lengthDays=" + lengthDays +
+                '}';
     }
 }
