@@ -53,9 +53,11 @@ public class GroupClimbers extends PrimeID{
               Set<GroupClimbers> newL = member.getGroups();
               newL.add(this);
               member.setGroups(newL);
+              cldao.add(member); //as we know is new & transient
             }
             Set<GroupClimbers> newL = cldao.getByPk(member.getId()).getGroups();
             if (member.IfIsValidForClimberAdd(this))members.remove(member);
+            cldao.update(member); //as we know its present in table
         }
         this.members = members;
     }
