@@ -55,13 +55,9 @@ public class GroupClimbers extends PrimeID{
               member.setGroups(newL);
             }
             Set<GroupClimbers> newL = cldao.getByPk(member.getId()).getGroups();
-            newL.add(this);
-            member.setGroupsChecked(newL);
-
+            if (member.IfIsValidForClimberAdd(this))members.remove(member);
         }
-
         this.members = members;
-
     }
 
     public boolean isAvailableToJoin() {

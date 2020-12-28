@@ -2,8 +2,6 @@ package tourism;
 
 
 import Dao.ClimberDao;
-import auxilary.SolitaryManager;
-import staticGen.StaticStrings;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -21,6 +19,8 @@ public class Climber extends PrimeID {
     private int age;
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<GroupClimbers> groups;
+    @Transient
+    public static ClimberDao tempDao = new ClimberDao();
 
     public Climber(String name, String adress, int age) {
         setName(name);
@@ -71,30 +71,58 @@ public class Climber extends PrimeID {
         return groups;
     }
 
-    public void setGroups(Set<GroupClimbers> groups) {
-       setGroupsChecked(groups);
+    /**
+     * Checked method for altering climbers  Set<GroupClimbers> groups, avoid any others.
+     * @param groupSet
+     */
+    public void setGroups(Set<GroupClimbers> groupSet) {
+        if (this.getId() == 0 && tempDao.getByPk(0) != this) {
+            this.groups = groupSet;
+            return;
+        }
+        updategroupsFromBaze();
+        for (GroupClimbers group : this.groups) {
+            if (!groupSet.contains(group)) this.groups.remove(group);
+        }
+        for (GroupClimbers groupClimbers : groupSet) {
+            IfIsValidForClimberAdd(groupClimbers);
+        }
     }
 
-    public boolean setGroupsChecked (Set<GroupClimbers> groups) {
-        ClimberDao tempDao = new ClimberDao();
-        if (this.getId() == 0 && tempDao.getByPk(0) != this) {
-            this.groups = groups;
-            return false;
-        }
-        Set<GroupClimbers> groupsCurrient = tempDao.getByPk(this.getId()).getGroups();
-        for (GroupClimbers groupClimbers : groupsCurrient) {
+    /**
+     * Checking method for adding Group to Set<GroupClimbers> groups, is used by @setGroups
+     * @param group - single group for adding to climber
+     * @return true if group was succesfully added
+     */
+    public boolean IfIsValidForClimberAdd (GroupClimbers group){
+        updategroupsFromBaze();
+        LocalDate start2 = group.getStart();
+        LocalDate finish2 = start2.plusDays(group.getLengthDays());
+        for (GroupClimbers groupClimbers : this.groups) {
             LocalDate start1 = groupClimbers.getStart();
             LocalDate finish1 = groupClimbers.getStart().plusDays(groupClimbers.getLengthDays());
-            for (GroupClimbers group : groups) {
-                LocalDate start2 =group.getStart();
-                LocalDate finish2 = start2.plusDays(group.getLengthDays());
-                if (start2.isAfter(start1)&&start2.isBefore(finish1)) return false;
-                if (finish2.isAfter(start1)&&start2.isBefore(finish1)) return false;
-            }
+            if (start2.isAfter(start1) && start2.isBefore(finish1)) return false;
+            if (finish2.isAfter(start1) && start2.isBefore(finish1)) return false;
         }
-        this.groups =groups;
+        this.groups.add(group);
         return true;
     }
+
+    /**
+     * Method used for keeping   Set<GroupClimbers> groups true for Entities not present in Base may cause problems
+     * Is called only by checking for transient quality in methods of higher level.
+     */
+    private void updategroupsFromBaze(){
+        Climber climber = tempDao.getByPk(this.getId());
+        if (climber != null) {
+            this.groups = climber.getGroups();
+        }
+    }
+
+    /**
+     * Intertnal method
+     * @return  String representing groups partisipated by this climber
+     */
 
     private String groupsIdandMountain() {
         StringBuilder stringBuilder = new StringBuilder(" Groups");
@@ -127,6 +155,10 @@ public class Climber extends PrimeID {
         return result;
     }
 
+    /**
+     *
+     * @return String representation  of Climber DeadLock safe
+     */
     @Override
     public String toString() {
         return '\n' + "Climber{" + " Id of: " + getId() + " " +
